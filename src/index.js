@@ -1,26 +1,27 @@
 import { fetchBreeds } from './cat-api';
 
-// const BREEDS_URL = 'https://api.thecatapi.com/v1/breeds';
-
 const API_KEY =
   'live_P2Spxc1aBtbpL0qSmUXZGLjJn7MNbol18Wj7A0liYsyvJzqeNmL2lGZTrxZnladk';
-//  'api_key=live_P2Spxc1aBtbpL0qSmUXZGLjJn7MNbol18Wj7A0liYsyvJzqeNmL2lGZTrxZnladk';
 
-// const SEARCH_URL =
-//   'https://api.thecatapi.com/v1/images/search?breed_ids={breed.id}';
 const SEARCH_URL = 'https://api.thecatapi.com/v1/images/search';
 
 const select = document.querySelector('.breed-select');
 select.addEventListener('change', fetchCatByBreed);
-console.log(select);
-// select.option.selected = false;
+
 const container = document.querySelector('.cat-info');
 
+const loader = document.querySelector('.loader');
+loader.style.display = 'none';
+
+const error = document.querySelector('.error');
+error.style.display = 'none';
+
+// let breedId = '';
 //--------------------------------------------------------
 function updateSelect(data) {
-  fetchBreeds(data).then(data => {
+  fetchBreeds(data).then(dataFetched => {
     // console.log(data);
-    const markupBreeds = data
+    const markupBreeds = dataFetched
       .map(({ id, name }) => {
         return `<option value =${id}>${name}</option>`;
       })
@@ -30,18 +31,17 @@ function updateSelect(data) {
   });
 }
 updateSelect();
-console.log(select);
+
 //-------------------------------------------------
+
 function fetchCatByBreed(breedId) {
-  console.log(breedId);
+  // breedId = select.value;
   const params = new URLSearchParams({
     api_key: API_KEY,
-    // breed_ids: breedId,
-    breed_ids: `${breed.id}`,
+    breed_ids: breedId,
   });
   return fetch(`${SEARCH_URL}?${params}`)
     .then(response => {
-      console.log(response);
       if (!response.ok) {
         throw new Error(response.status);
       }
@@ -49,32 +49,26 @@ function fetchCatByBreed(breedId) {
     })
     .catch(error => console.log(error));
 }
-// fetchCatByBreed('bengal');
-
-// function chooseBreed() {
-//   const chosenBreed = select.value;
-//   console.log(chooseBreed);
-// }
+// fetchCatByBreed();
 
 function updateCatInfo(breedId) {
-  if (select.option === breedId) {
-    fetchBreeds(breedId).then(breedId => {
-      // console.log(data);
-      const markupCat = breedId.map(
-        ({ name, description, temperament, image }) => {
-          // console.log(url);
-          return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${image}' alt='${name}' width='200'>`;
-        }
-      );
-      // .join('');
-      // .forEach(({ name, description, temperament, image }) => {
-      //   // console.log(url);
-      //   return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${image}' alt='${name}' width='200'>`;
-      // });
+  breedId = select.value;
+  // console.log(breedId);
 
-      container.insertAdjacentHTML('beforeend', markupCat);
-    });
-  }
+  fetchBreeds(breedId).then(cats => {
+    const markupCat = cats
+      .map(({ url, name, description, temperament }) => {
+        return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${url}' alt='${name}' width='200'>`;
+      })
+      .join('');
+
+    // .forEach(({ url, name, description, temperament }) => {
+    //   // console.log(url);
+    //   return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${url}' alt='${name}' width='200'>`;
+    // });
+
+    container.insertAdjacentHTML('beforeend', markupCat);
+  });
 }
 updateCatInfo();
 //----------------------------------------------------
