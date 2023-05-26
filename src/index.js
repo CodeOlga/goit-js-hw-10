@@ -35,7 +35,7 @@ updateSelect();
 //-------------------------------------------------
 
 function fetchCatByBreed(breedId) {
-  // breedId = select.value;
+  breedId = select.value;
   const params = new URLSearchParams({
     api_key: API_KEY,
     breed_ids: breedId,
@@ -52,7 +52,7 @@ function fetchCatByBreed(breedId) {
 // fetchCatByBreed();
 
 function updateCatInfo(breedId) {
-  breedId = select.value;
+  // breedId = select.value;
   // console.log(breedId);
 
   fetchBreeds(breedId).then(cats => {
