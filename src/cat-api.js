@@ -6,15 +6,24 @@ function fetchBreeds() {
   const params = new URLSearchParams({
     api_key: API_KEY,
   });
-  return fetch(`${BREEDS_URL}?${params}`)
-    .then(response => {
-      console.log(response);
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    })
-    .catch(error => console.log(error));
+  return fetch(`${BREEDS_URL}?${params}`).then(response => {
+    console.log(response);
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+    return response.json();
+  });
 }
 
-export { fetchBreeds };
+function fetchCatByBreed(breedId) {
+  return fetch(
+    `https://api.thecatapi.com/v1/images/${breedId}?api_key=${API_KEY}`
+  ).then(response => {
+    if (!response.ok) {
+      throw new Error(response.status);
+    }
+    return response.json();
+  });
+}
+
+export { fetchBreeds, fetchCatByBreed };

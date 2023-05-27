@@ -1,74 +1,58 @@
-import { fetchBreeds } from './cat-api';
-
-const API_KEY =
-  'live_P2Spxc1aBtbpL0qSmUXZGLjJn7MNbol18Wj7A0liYsyvJzqeNmL2lGZTrxZnladk';
-
-const SEARCH_URL = 'https://api.thecatapi.com/v1/images/search';
+import { fetchBreeds, fetchCatByBreed } from './cat-api';
+import Notiflix from 'notiflix';
 
 const select = document.querySelector('.breed-select');
-select.addEventListener('change', fetchCatByBreed);
+select.addEventListener('change', onChangeSelect);
 
-const container = document.querySelector('.cat-info');
-
+const divPicture = document.querySelector('.cat-info-picture');
+const divInfo = document.querySelector('.cat-info-desc');
 const loader = document.querySelector('.loader');
-loader.style.display = 'none';
 
-const error = document.querySelector('.error');
-error.style.display = 'none';
+fetchAndRenderBreeds();
 
-// let breedId = '';
-//--------------------------------------------------------
-function updateSelect(data) {
-  fetchBreeds(data).then(dataFetched => {
-    // console.log(data);
-    const markupBreeds = dataFetched
-      .map(({ id, name }) => {
-        return `<option value =${id}>${name}</option>`;
-      })
-      .join('');
-
-    select.insertAdjacentHTML('beforeend', markupBreeds);
-  });
-}
-updateSelect();
-
-//-------------------------------------------------
-
-function fetchCatByBreed(breedId) {
-  breedId = select.value;
-  const params = new URLSearchParams({
-    api_key: API_KEY,
-    breed_ids: breedId,
-  });
-  return fetch(`${SEARCH_URL}?${params}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
+function fetchAndRenderBreeds() {
+  loader.classList.remove('invisible');
+  fetchBreeds()
+    .then(cats => updateSelect(cats))
+    .catch(error => {
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
     })
-    .catch(error => console.log(error));
+    .finally(() => {
+      loader.classList.add('invisible');
+      select.classList.remove('invisible');
+    });
 }
-// fetchCatByBreed();
 
-function updateCatInfo(breedId) {
-  // breedId = select.value;
-  // console.log(breedId);
+function onChangeSelect(e) {
+  loader.classList.remove('invisible');
+  divPicture.innerHTML = '';
+  divInfo.innerHTML = '';
+  const breedId = e.target.value;
 
-  fetchBreeds(breedId).then(cats => {
-    const markupCat = cats
-      .map(({ url, name, description, temperament }) => {
-        return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${url}' alt='${name}' width='200'>`;
-      })
-      .join('');
-
-    // .forEach(({ url, name, description, temperament }) => {
-    //   // console.log(url);
-    //   return `<h2>${name}</h2><p>${description}</p><p>Temperament: ${temperament}</p><img src='${url}' alt='${name}' width='200'>`;
-    // });
-
-    container.insertAdjacentHTML('beforeend', markupCat);
-  });
+  fetchCatByBreed(breedId)
+    .then(breed => updateCatInfo(breed))
+    .catch(error => {
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+    })
+    .finally(() => loader.classList.add('invisible'));
 }
-updateCatInfo();
-//----------------------------------------------------
+
+function updateSelect(cats) {
+  const markupBreeds = cats
+    .map(({ reference_image_id, name }) => {
+      return `<option value =${reference_image_id}>${name}</option>`;
+    })
+    .join('');
+  select.insertAdjacentHTML('beforeend', markupBreeds);
+}
+
+function updateCatInfo(breed) {
+  const markupPicture = `<img src='${breed.url}' alt='${breed.id}' width='400'>`;
+  const markupDesc = `<h1 class="cat-info-desc">${breed.breeds[0].name}</h1><p class="cat-info-desc">${breed.breeds[0].description}</p><p class="cat-info-desc"><b>Temperament:</b> ${breed.breeds[0].temperament}</p>`;
+  divPicture.insertAdjacentHTML('beforeend', markupPicture);
+  divInfo.insertAdjacentHTML('beforeend', markupDesc);
+}
