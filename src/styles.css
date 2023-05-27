@@ -10,9 +10,8 @@ body {
 }
 
 .cat-info {
-  margin-top: 15px;
+  margin-top: 20px;
   display: flex;
-  flex-direction: row;
   gap: 40px;
   max-width: 900px;
 }
