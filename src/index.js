@@ -1,5 +1,7 @@
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
 import Notiflix from 'notiflix';
+import SlimSelect from 'slim-select';
+import 'slim-select/dist/slimselect.css';
 
 const select = document.querySelector('.breed-select');
 select.addEventListener('change', onChangeSelect);
@@ -48,6 +50,9 @@ function updateSelect(cats) {
     })
     .join('');
   select.insertAdjacentHTML('beforeend', markupBreeds);
+  new SlimSelect({
+    select: '#single',
+  });
 }
 
 function updateCatInfo(breed) {
