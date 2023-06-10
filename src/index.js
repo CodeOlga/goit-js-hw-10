@@ -56,7 +56,7 @@ function updateSelect(cats) {
 }
 
 function updateCatInfo(breed) {
-  const markupPicture = `<img src='${breed.url}' alt='${breed.id}' width='400'>`;
+  const markupPicture = `<img class="cat-info-picture" src='${breed.url}' alt='${breed.id}' width='400'>`;
   const markupDesc = `<h1 class="cat-info-desc">${breed.breeds[0].name}</h1><p class="cat-info-desc">${breed.breeds[0].description}</p><p class="cat-info-desc"><b>Temperament:</b> ${breed.breeds[0].temperament}</p>`;
   divPicture.insertAdjacentHTML('beforeend', markupPicture);
   divInfo.insertAdjacentHTML('beforeend', markupDesc);

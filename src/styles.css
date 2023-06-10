@@ -118,4 +118,7 @@ body {
   .cat-info {
     flex-direction: column;
   }
+  .cat-info-picture {
+    width: 100%;
+  }
 }
