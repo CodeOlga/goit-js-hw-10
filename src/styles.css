@@ -114,3 +114,8 @@ body {
 .wrapper {
   padding: 20px;
 }
+@media screen and (max-width: 768px) {
+  .cat-info {
+    flex-direction: column;
+  }
+}
